@@ -1,0 +1,19 @@
+# Environment and configuration
+python-dotenv
+
+# LangChain core components
+langchain
+langchain-community
+langchain-openai
+
+# Vector store
+faiss-cpu
+
+# GitHub API
+PyGithub
+
+# Web interface
+streamlit
+
+#for loading the pdfs
+pypdf
