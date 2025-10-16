@@ -9,35 +9,55 @@ st.set_page_config(page_title="CoterGlobal AI", layout="wide")
 # --- Custom CSS (Elegant Slate Theme) ---
 st.markdown("""
     <style>
-        /* Global Theme Fix — full blue background */
+        /* === FULL BACKGROUND THEME === */
         html, body, [data-testid="stAppViewContainer"], .stApp {
-            background-color: #009aee !important;
-            background: linear-gradient(145deg, #009aee 0%, #00b3ff 100%) !important;
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            height: 100%;
+            background-color: #0077b6 !important;
+            background: linear-gradient(135deg, #0077b6 0%, #0096c7 50%, #00b4d8 100%) !important;
+            color: white !important;
+            height: 100% !important;
+            min-height: 100vh !important;
             margin: 0 !important;
             padding: 0 !important;
         }
 
-        /* Remove white/black top & bottom spaces */
-        [data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stStatusWidget"] {
+        /* === REMOVE HEADER / FOOTER / TOOLBAR === */
+        header[data-testid="stHeader"],
+        div[data-testid="stToolbar"],
+        footer,
+        #MainMenu {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+        }
+
+        /* === REMOVE INTERNAL BOTTOM PADDING === */
+        section.main, div.block-container {
+            padding-bottom: 0 !important;
+            margin-bottom: 0 !important;
             background: transparent !important;
         }
 
-        /* Adjust main content container */
-        .block-container {
-            padding-top: 2.5rem;
-            padding-bottom: 3rem;
+        /* === FULL APP CONTAINER FIX === */
+        [data-testid="stAppViewContainer"] > .main {
+            padding-top: 0rem !important;
+            padding-bottom: 0rem !important;
+        }
+
+        /* === BODY FIX FOR DARK PADDING === */
+        [data-testid="stVerticalBlock"] {
             background: transparent !important;
         }
 
-        /* Profile Section */
-        .profile-container {
+        /* === CENTER LOGO + TITLES === */
+        .center-header {
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            margin: 25px 0 10px 0;
+            text-align: center;
+            margin-bottom: 40px;
         }
+
         .profile-pic {
             width: 140px;
             height: 140px;
@@ -46,99 +66,54 @@ st.markdown("""
             clip-path: circle(45% at 50% 50%);
             border: 3px solid #0A66C2;
             box-shadow: 0 4px 10px rgba(10,102,194,0.2);
+            margin-bottom: 10px;
         }
 
-        /* Titles */
         .main-title {
-            text-align: center;
-            font-size: 1.8em;
-            font-weight: 600;
-            color: #000b31;
-            margin-top: 12px;
-            letter-spacing: -0.3px;
+            font-size: 2.4em;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 10px;
         }
 
         .sub-title {
-            text-align: center;
-            font-size: 1em;
-            color: #000000;
-            margin-bottom: 35px;
-            font-weight: 400;
+            font-size: 1.1em;
+            color: #e0f7ff;
+            margin-bottom: 25px;
         }
 
-        /* Chat messages */
-        div[data-testid="stChatMessage"] {
-            background-color: #c2d0ff;
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 14px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
-            color: #1e293b !important;
+        /* === CHAT UI === */
+        .chat-bubble {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            margin: 10px auto;
+            font-size: 1.05em;
+            line-height: 1.6;
         }
 
-        /* Assistant message */
-        div[data-testid="stChatMessage"]:has([data-testid="assistant"]) {
-            border-left: 4px solid #004c99;
+        .user-bubble {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #0077b6;
+            border-bottom-right-radius: 5px;
         }
 
-        /* User message */
-        div[data-testid="stChatMessage"]:has([data-testid="user"]) {
-            background-color: #ffffff;
-            border-left: 4px solid #009aee;
+        .ai-bubble {
+            background-color: rgba(10, 102, 194, 0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #ffffff;
+            border-bottom-left-radius: 5px;
         }
 
-        /* Message Text */
-        div[data-testid="stChatMessage"] p,
-        div[data-testid="stChatMessage"] span,
-        div[data-testid="stChatMessage"] div {
-            color: #1e293b !important;
-            font-size: 0.98em;
-            line-height: 1.45;
-        }
-
-        /* Chat Input */
-        .stChatInput textarea {
-            background-color: #ffffff !important;
-            color: #1e293b !important;
-            border-radius: 10px !important;
-            border: 1px solid #cbd5e1 !important;
-            box-shadow: 0 3px 6px rgba(10,102,194,0.08);
-            font-family: 'Inter', sans-serif !important;
-            font-size: 1.05em !important;
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb {
-            background: #b3caec;
+        .stTextInput > div > div > input {
             border-radius: 10px;
-        }
-
-        /* Hover Effect */
-        div[data-testid="stChatMessage"]:hover {
-            box-shadow: 0 6px 16px rgba(10,102,194,0.08);
-            transform: translateY(-1px);
-            transition: 0.25s ease-in-out;
-        }
-
-        /* Fade-in Animation */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .assistant-response {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        /* Hide Default Avatars */
-        [data-testid="stChatMessageAvatar"] {
-            display: none !important;
+            padding: 12px;
+            border: 1px solid #ffffff33;
+            background-color: rgba(255,255,255,0.1);
+            color: #fff;
         }
     </style>
 """, unsafe_allow_html=True)
-
-
-
 
 # --- Initialize assistant ---
 if "qa_chain" not in st.session_state:
@@ -147,7 +122,7 @@ if "qa_chain" not in st.session_state:
 
 qa_chain = st.session_state["qa_chain"]
 
-# --- Display Profile Image ---
+# --- Display Logo + Titles ---
 def image_to_base64(image_path):
     with open(image_path, "rb") as img:
         return base64.b64encode(img.read()).decode()
@@ -156,14 +131,12 @@ image_path = Path(__file__).parent / "coter_logo.jpeg"
 if image_path.exists():
     img_base64 = image_to_base64(image_path)
     st.markdown(f"""
-        <div class="profile-container">
+        <div class="center-header">
             <img src="data:image/jpeg;base64,{img_base64}" class="profile-pic">
+            <div class='main-title'>Hello dear!</div>
+            <div class='sub-title'>I am a chatbot, ask questions and share your data here.</div>
         </div>
     """, unsafe_allow_html=True)
-
-# --- Titles ---
-st.markdown("<div class='main-title'>Hello dear!</div>", unsafe_allow_html=True)
-st.markdown("<div class='sub-title'>I am a chatbot, ask questions and share your data here.</div>", unsafe_allow_html=True)
 
 # --- Chat Container ---
 chat_container = st.container()
@@ -173,16 +146,18 @@ with chat_container:
     for message in st.session_state["messages"]:
         with st.chat_message(message["role"]):
             if message["role"] == "assistant":
-                st.markdown(f"<div class='assistant-response'>{message['content']}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='chat-bubble ai-bubble'>{message['content']}</div>", unsafe_allow_html=True)
             else:
-                st.markdown(message["content"])
+                # Remove user-bubble div, use plain text to avoid double background
+                st.markdown(message["content"], unsafe_allow_html=True)
 
 # --- Chat input ---
 if prompt := st.chat_input("Type your question..."):
     st.session_state["messages"].append({"role": "user", "content": prompt})
     
     with st.chat_message("user"):
-        st.markdown(prompt)
+        # Display plain text, no extra div
+        st.markdown(prompt, unsafe_allow_html=True)
 
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
@@ -194,6 +169,6 @@ if prompt := st.chat_input("Type your question..."):
         except Exception as e:
             response = f"⚠️ Error: {e}"
 
-        message_placeholder.markdown(response)
+        message_placeholder.markdown(f"<div class='chat-bubble ai-bubble'>{response}</div>", unsafe_allow_html=True)
 
     st.session_state["messages"].append({"role": "assistant", "content": response})
